@@ -75,6 +75,49 @@ async function loadData(){
  data.patients=p.data.map(x=>({id:x.id,name:x.name,phone:x.phone||'',birth:x.birth_date||'',model:x.billing_model||'Por sessão',value:Number(x.agreed_value)||0,qty:Number(x.package_quantity)||0,notes:x.administrative_notes||''}));
  data.sessions=s.data.map(x=>({id:x.id,patient:x.patient_id,date:x.scheduled_at,status:x.status,value:Number(x.value)||0,desc:x.description||''}));
  data.payments=m.data.map(x=>({id:x.id,patient:x.patient_id,date:x.payment_date,value:Number(x.amount)||0,method:x.payment_method||'',status:x.status,desc:x.description||''}));render();
+}let financeChartInstance=null;
+
+function renderFinanceChart(){
+ const canvas=$('financeChart');
+ if(!canvas||typeof Chart==='undefined')return;
+
+ const agora=new Date();
+ const meses=[];
+
+ for(let i=5;i>=0;i--){
+  const d=new Date(agora.getFullYear(),agora.getMonth()-i,1);
+  const chave=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  meses.push({
+   chave,
+   nome:d.toLocaleDateString('pt-BR',{month:'short'})
+  });
+ }
+
+ const recebido=meses.map(m=>data.payments
+  .filter(p=>p.date.startsWith(m.chave)&&p.status==='Recebido')
+  .reduce((s,p)=>s+Number(p.value||0),0));
+
+ const pendente=meses.map(m=>data.payments
+  .filter(p=>p.date.startsWith(m.chave)&&p.status==='Pendente')
+  .reduce((s,p)=>s+Number(p.value||0),0));
+
+ if(financeChartInstance)financeChartInstance.destroy();
+
+ financeChartInstance=new Chart(canvas,{
+  type:'bar',
+  data:{
+   labels:meses.map(m=>m.nome),
+   datasets:[
+    {label:'Recebido',data:recebido,backgroundColor:'#c5a15a'},
+    {label:'Pendente',data:pendente,backgroundColor:'#777'}
+   ]
+  },
+  options:{
+   responsive:true,
+   maintainAspectRatio:false,
+   scales:{y:{beginAtZero:true}}
+  }
+ });
 }
 function render(){
  $('kPatients').textContent=data.patients.length;$('kSessions').textContent=data.sessions.filter(s=>s.status==='Realizada').length;
@@ -83,6 +126,7 @@ function render(){
  let opts='<option value="">Selecione...</option>'+data.patients.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');$('sPatient').innerHTML=opts;$('payPatient').innerHTML=opts;
  $('sessionRows').innerHTML=data.sessions.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(s=>`<tr><td>${new Date(s.date).toLocaleString('pt-BR')}</td><td>${esc(patientName(s.patient))}</td><td>${esc(s.desc)}</td><td><span class="pill">${esc(s.status)}</span></td><td>${money(s.value)}</td><td><button class="smallbtn danger" onclick="delItem('sessions','${s.id}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nenhuma sessão registrada.</td></tr>';
  const filtroMes=$('filterMonth').value;$('payRows').innerHTML=pagamentosPeriodo.map(p=>`<tr><td>${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')}</td><td>${esc(patientName(p.patient))}</td><td>${esc(p.desc)}</td><td>${esc(p.method)}</td><td>${esc(p.status)}</td><td>${money(p.value)}</td><td><button class="smallbtn secondary" onclick="receipt('${p.id}')">PDF / imprimir</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Nenhum pagamento registrado.</td></tr>'; let upcoming=data.sessions.filter(s=>s.status==='Agendada').sort((a,b)=>String(a.date).localeCompare(String(b.date)));let list=upcoming.map(s=>`<p>📅 <b>${new Date(s.date).toLocaleString('pt-BR')}</b> — ${esc(patientName(s.patient))}</p>`).join('')||'Nenhum atendimento agendado.';$('nextList').innerHTML=list;$('agendaList').innerHTML=list;
+renderFinanceChart();
 }
 const pagamentosPeriodo=data.payments.filter(p=>!filtroMes||p.date.startsWith(filtroMes));
 
