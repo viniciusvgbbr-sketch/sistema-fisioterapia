@@ -68,7 +68,30 @@
   </div>
 </div>
 <div class="table-wrap"><table><thead><tr><th>Data</th><th>Paciente</th><th>Descrição</th><th>Forma</th><th>Status</th><th>Recibo</th></tr></thead><tbody id="payRows"></tbody></table></div></div></section>
-<section id="agendaPage" class="hidden"><div class="panel"><h3>Agenda de atendimentos</h3><p class="muted">A agenda reúne os atendimentos registrados na aba Sessões.</p><div id="agendaList" class="empty">Nenhum atendimento.</div></div></section>
+<section id="recoveryPage" class="hidden">
+<div class="panel">
+<h3>Registrar atendimento Recovery</h3>
+<form id="recoveryForm" class="formgrid">
+<div><label>Nome da pessoa *</label><input id="rName" required placeholder="Nome do cliente"></div>
+<div><label>Data do atendimento *</label><input id="rDate" type="date" required></div>
+<div><label>Valor cobrado (R$) *</label><input id="rValue" type="number" min=".01" step=".01" required></div>
+<div><label>Forma de pagamento</label><select id="rMethod"><option>PIX</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Transferência</option><option>Outro</option></select></div>
+<div><label>Situação</label><select id="rStatus"><option>Recebido</option><option>Pendente</option></select></div>
+<div><label>Observações</label><input id="rDesc" placeholder="Detalhes do atendimento"></div>
+<div class="wide"><button>Registrar Recovery</button></div>
+</form>
+<div id="recoveryError" class="error"></div>
+</div>
+<div class="panel">
+<h3>Histórico de Recovery</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Data</th><th>Nome</th><th>Valor</th><th>Pagamento</th><th>Status</th><th>Ações</th></tr></thead>
+<tbody id="recoveryRows"></tbody>
+</table>
+</div>
+</div>
+</section><section id="agendaPage" class="hidden"><div class="panel"><h3>Agenda de atendimentos</h3><p class="muted">A agenda reúne os atendimentos registrados na aba Sessões.</p><div id="agendaList" class="empty">Nenhum atendimento.</div></div></section>
 </main></div>
 <script>
 // CONFIGURAÇÃO: substitua apenas os dois valores abaixo pelos dados do seu projeto Supabase.
@@ -77,7 +100,11 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_5TB6I5sJgjktuMyts_p1-A_8Orr_YZK
 const $=id=>document.getElementById(id), money=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 let sb=null, user=null, data={patients:[],sessions:[],payments:[]};
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function showPage(p){['dashboard','patients','sessions','finance','agenda'].forEach(x=>$(x+'Page').classList.toggle('hidden',x!==p));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));$('pageTitle').textContent=({dashboard:'Visão geral',patients:'Pacientes',sessions:'Sessões',finance:'Financeiro',agenda:'Agenda'})[p]}
+function showPage(p){
+['dashboard','patients','sessions','finance','recovery','agenda'].forEach(x=>$(x+'Page').classList.toggle('hidden',x!==p));
+document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
+$('pageTitle').textContent=({dashboard:'Visão geral',patients:'Pacientes',sessions:'Sessões',finance:'Financeiro',recovery:'Recovery',agenda:'Agenda'})[p]
+}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function patientName(id){return data.patients.find(p=>p.id===id)?.name||'Paciente não encontrado'}
 function msg(id,e){$(id).textContent=e?.message||String(e||'');}
