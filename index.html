@@ -167,8 +167,7 @@ const pagamentosPeriodo=data.payments.filter(p=>!filtroMes||p.date.startsWith(fi
 
 const totalRecebido=pagamentosPeriodo.filter(p=>p.status==='Recebido').reduce((a,p)=>a+Number(p.value||0),0);
 
-const totalPendente=pagamentosPeriodo.filter(p=>p.status==='Pendente').reduce((a,p)=>a+Number(p.value||0),0);
-
+const totalPendente=totalAReceber;
 $('finReceived').textContent=money(totalRecebido);
 $('finPending').textContent=money(totalPendente);
 $('finCount').textContent=pagamentosPeriodo.length;
