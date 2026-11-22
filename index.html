@@ -137,7 +137,7 @@ function render(){
  return total+(p.qty?Math.max(0,p.qty-realizadasPaciente):0);
 },0);
 $('kRemaining').textContent=totalSessoesRestantes;const totalSessoesContratadas=data.patients.reduce((total,p)=>total+(Number(p.qty)||0),0);
-$('kTotalSessions').textContent=totalSessoesContratadas;console.log(data.patients.map(p=>({nome:p.name,pacote:p.qty})));
+$('kTotalSessions').textContent=totalSessoesContratadas;
  const hoje=new Date();
 const mesAtual=hoje.getFullYear()+'-'+String(hoje.getMonth()+1).padStart(2,'0');
 
