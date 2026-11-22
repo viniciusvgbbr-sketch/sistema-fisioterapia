@@ -226,9 +226,7 @@ const valorPacientes=data.patients.reduce((total,p)=>{
 },0);
 
 const valorRecovery=data.recoveries
- .filter(r=>r.status==='Realizado')
  .reduce((total,r)=>total+Number(r.value||0),0);
-
 const valorTotalContratado=valorPacientes+valorRecovery;
 
 $('kTotal').textContent=money(valorTotalContratado);
