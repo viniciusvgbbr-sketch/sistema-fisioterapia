@@ -360,6 +360,12 @@ function receipt(id){let p=data.payments.find(x=>x.id===id);if(!p)return;let w=w
 .finance-cards .card{
  min-height:100px;
 }</style></head><body><div class="r"><h1>Dra. Ana Paula Dourado</h1><small>FISIOTERAPEUTA · CREFITO 450197-F</small><hr><h2>RECIBO DE PAGAMENTO</h2><p>Recibo nº ${esc(p.id.slice(0,8).toUpperCase())}</p><p>Recebi de <b>${esc(patientName(p.patient))}</b> a importância de <b>${money(p.value)}</b>.</p><p>Referente a: ${esc(p.desc||'Serviços de fisioterapia')}</p><p>Data: ${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')} · Forma: ${esc(p.method)}</p><br><p>__________________________________<br>Dra. Ana Paula Dourado<br>CREFITO 450197-F</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-fisioterapia.json';a.click();URL.revokeObjectURL(a.href)};
+function recoveryReceipt(id){
+let r=data.recoveries.find(x=>x.id===id);
+if(!r)return;
+let w=window.open('','_blank');
+w.document.write(`<html><head><title>Recibo Recovery</title><style>body{font:16px Arial;padding:50px;color:#222}.r{max-width:700px;margin:auto;border:1px solid #ddd;padding:35px}h1{color:#9b7837}small{color:#9b7837}</style></head><body><div class="r"><h1>Dra. Ana Paula Dourado</h1><small>FISIOTERAPEUTA · CREFITO 450197-F</small><hr><h2>RECIBO DE PAGAMENTO - RECOVERY</h2><p>Recibo nº ${esc(r.id.slice(0,8).toUpperCase())}</p><p>Recebi de <b>${esc(r.name)}</b> a importância de <b>${money(r.value)}</b>.</p><p>Referente a: ${esc(r.desc||'Atendimento Recovery')}</p><p>Data: ${new Date(r.date+'T12:00:00').toLocaleDateString('pt-BR')} · Forma: ${esc(r.method)}</p><br><p>__________________________________<br>Dra. Ana Paula Dourado<br>CREFITO 450197-F</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);
+w.document.close();
+}$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-fisioterapia.json';a.click();URL.revokeObjectURL(a.href)};
 (function init(){if(SUPABASE_URL.startsWith('http')&&SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_')){sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);sb.auth.onAuthStateChange((_event,session)=>{if(session?.user)startApp()})}else{msg('loginError','Configure a URL e a chave publicável do Supabase no código.')}})();
 </script></body></html>
