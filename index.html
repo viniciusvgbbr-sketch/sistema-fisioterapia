@@ -305,6 +305,17 @@ $('logout').onclick=async()=>{await sb.auth.signOut();user=null;$('app').style.d
 $('quickAdd').onclick=()=>showPage('patients');$('patientSearch').oninput=render;
 $('patientForm').onsubmit=async e=>{e.preventDefault();msg('patientError','');const id=$('pId').value;const row={owner_id:user.id,name:$('pName').value.trim(),phone:$('pPhone').value||null,birth_date:$('pBirth').value||null,billing_model:$('pModel').value,agreed_value:Number($('pValue').value)||0,package_quantity:Number($('pQty').value)||null,administrative_notes:$('pNotes').value||null};let q=id?sb.from('patients').update(row).eq('id',id):sb.from('patients').insert(row);const {error}=await q;if(error){msg('patientError',error.message);return}e.target.reset();$('pId').value='';await loadData()};
 function editPatient(id){let p=data.patients.find(x=>x.id===id);if(!p)return;showPage('patients');$('pId').value=p.id;$('pName').value=p.name;$('pPhone').value=p.phone;$('pBirth').value=p.birth;$('pModel').value=p.model;$('pValue').value=p.value;$('pQty').value=p.qty||'';$('pNotes').value=p.notes;window.scrollTo(0,0)}
+  async function renewPackage(id){
+ const p=data.patients.find(x=>x.id===id);
+ if(!p||p.model!=='Pacote')return;
+ if(!confirm('Renovar o pacote de '+p.name+' com '+p.qty+' sessões por '+money(p.value)+'?'))return;
+ const hojeLocal=new Date();
+ const dataHoje=hojeLocal.getFullYear()+'-'+String(hojeLocal.getMonth()+1).padStart(2,'0')+'-'+String(hojeLocal.getDate()).padStart(2,'0');
+ const {error}=await sb.from('patients').update({package_start_date:dataHoje}).eq('id',id);
+ if(error){alert('Erro ao renovar pacote: '+error.message);return;}
+ await loadData();
+ alert('Pacote renovado com sucesso!');
+}
 async function delPatient(id){if(!confirm('Excluir este paciente? Se houver sessões ou pagamentos vinculados, o banco poderá impedir a exclusão.'))return;const {error}=await sb.from('patients').delete().eq('id',id);if(error){alert('Não foi possível excluir: '+error.message);return}await loadData()}
 $('cancelPatient').onclick=()=>{$('patientForm').reset();$('pId').value='';msg('patientError','')};
 $('sessionForm').onsubmit=async e=>{
