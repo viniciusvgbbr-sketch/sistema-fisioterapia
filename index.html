@@ -183,10 +183,15 @@ $('kTotalSessions').textContent=totalSessoesContratadas;
  const hoje=new Date();
 const mesAtual=hoje.getFullYear()+'-'+String(hoje.getMonth()+1).padStart(2,'0');
 
-$('kPaid').textContent=money(data.payments.filter(p=>p.status==='Recebido').reduce((a,p)=>a+p.value,0));
+$('kPaid').textContent=money([
+ ...data.payments,
+ ...data.recoveries
+].filter(p=>p.status==='Recebido').reduce((a,p)=>a+Number(p.value||0),0));
 
-$('kMonth').textContent=money(data.payments.filter(p=>p.status==='Recebido'&&p.date.startsWith(mesAtual)).reduce((a,p)=>a+p.value,0));
-
+$('kMonth').textContent=money([
+ ...data.payments,
+ ...data.recoveries
+].filter(p=>p.status==='Recebido'&&p.date.startsWith(mesAtual)).reduce((a,p)=>a+Number(p.value||0),0));
 const totalAReceber=data.patients.reduce((total,p)=>{
  const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido').reduce((s,x)=>s+x.value,0);
  let devido=0;
