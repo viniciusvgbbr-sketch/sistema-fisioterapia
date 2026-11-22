@@ -225,8 +225,7 @@ const valorPacientes=data.patients.reduce((total,p)=>{
  return total+valor;
 },0);
 
-const valorRecovery=data.recoveriesconsole.log('RECOVERY:',data.recoveries);
-console.log('TOTAL RECOVERY:',data.recoveries.reduce((s,r)=>s+Number(r.value||0),0));
+const valorRecovery=data.recoveries
  .reduce((total,r)=>total+Number(r.value||0),0);
 const valorTotalContratado=valorPacientes+valorRecovery;
 
