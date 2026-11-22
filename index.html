@@ -357,7 +357,7 @@ $('recoveryForm').onsubmit=async e=>{
  }
  await loadData();
 }
-function receipt(id){let p=data.payments.find(x=>x.id===id);if(!p)return;let w=window.open('','_blank');w.document.write(`<html><head><title>Recibo</title><style>body{font:16px Arial;padding:50px;color:#222}.r{max-width:700px;margin:auto;border:1px solid #ddd;padding:35px}h1{color:#9b7837}small{color:#9b7837}.finance-cards{
+function receipt(id){let p=data.payments.find(x=>x.id===id);if(!p){recoveryReceipt(id);return;}let w=window.open('','_blank');w.document.write(`<html><head><title>Recibo</title><style>body{font:16px Arial;padding:50px;color:#222}.r{max-width:700px;margin:auto;border:1px solid #ddd;padding:35px}h1{color:#9b7837}small{color:#9b7837}.finance-cards{
  grid-template-columns:repeat(3,minmax(0,1fr));
 }
 .finance-cards .card{
