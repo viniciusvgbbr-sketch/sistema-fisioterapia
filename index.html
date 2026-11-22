@@ -147,13 +147,9 @@ function renderFinanceChart(){
   });
  }
 
- const recebido=meses.map(m=>data.payments
-  .filter(p=>p.date.startsWith(m.chave)&&p.status==='Recebido')
-  .reduce((s,p)=>s+Number(p.value||0),0));
+const recebido=meses.map(m=>[...data.payments,...data.recoveries].filter(p=>p.date.startsWith(m.chave)&&p.status==='Recebido').reduce((s,p)=>s+Number(p.value||0),0));
 
- const pendente=meses.map(m=>data.payments
-  .filter(p=>p.date.startsWith(m.chave)&&p.status==='Pendente')
-  .reduce((s,p)=>s+Number(p.value||0),0));
+ const pendente=meses.map(m=>[...data.payments,...data.recoveries].filter(p=>p.date.startsWith(m.chave)&&p.status==='Pendente').reduce((s,p)=>s+Number(p.value||0),0));
 
  if(financeChartInstance)financeChartInstance.destroy();
 
