@@ -186,7 +186,7 @@ $('kMonth').textContent=money([
  ...data.recoveries
 ].filter(p=>p.status==='Recebido'&&p.date.startsWith(mesAtual)).reduce((a,p)=>a+Number(p.value||0),0));
 const totalAReceber=data.patients.reduce((total,p)=>{
- const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido').reduce((s,x)=>s+x.value,0);
+ const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido'&&(p.model!=='Pacote'||String(x.date).slice(0,10)>=inicioPacote)).reduce((s,x)=>s+x.value,0);
  let devido=0;
 
  if(p.model==='Por sessão'){
