@@ -131,9 +131,9 @@ function renderFinanceChart(){
  });
 }
 function render(){
- $('kPatients').textContent=data.patients.length;$('kSessions').textContent=data.sessions.filter(s=>s.status==='Realizada').length;const totalSessoesRestantes=data.patients.filter(p=>p.model==='Pacote').reduce((total,p)=>{
+ $('kPatients').textContent=data.patients.length;$('kSessions').textContent=data.sessions.filter(s=>s.status==='Realizada').length;const totalSessoesRestantes=data.patients.reduce((total,p)=>{
  const realizadasPaciente=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada').length;
- return total+Math.max(0,(Number(p.qty)||0)-realizadasPaciente);
+ return total+(p.qty?Math.max(0,p.qty-realizadasPaciente):0);
 },0);
 $('kRemaining').textContent=totalSessoesRestantes;
  const hoje=new Date();
