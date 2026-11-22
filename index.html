@@ -167,10 +167,9 @@ const totalPendente=totalAReceber;
 $('finReceived').textContent=money(totalRecebido);
 $('finPending').textContent=money(totalPendente);
 $('finCount').textContent=pagamentosPeriodo.length;
-$('finBalance').textContent=money(totalRecebido-totalPendente);$('payRows').innerHTML=pagamentosPeriodo.map(p=>`<tr><td>${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')}</td><td>${esc(patientName(p.patient))}</td><td>${esc(p.desc)}</td><td>${esc(p.method)}</td><td>${esc(p.status)}</td><td>${money(p.value)}</td><td><button class="smallbtn secondary" onclick="receipt('${p.id}')">PDF / imprimir</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Nenhum pagamento registrado.</td></tr>'; let upcoming=data.sessions.filter(s=>s.status==='Agendada').sort((a,b)=>String(a.date).localeCompare(String(b.date)));let list=upcoming.map(s=>`<p>📅 <b>${new Date(s.date).toLocaleString('pt-BR')}</b> — ${esc(patientName(s.patient))}</p>`).join('')||'Nenhum atendimento agendado.';$('nextList').innerHTML=list;$('agendaList').innerHTML=list;
+$('payRows').innerHTML=pagamentosPeriodo.map(p=>`<tr><td>${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')}</td><td>${esc(patientName(p.patient))}</td><td>${esc(p.desc)}</td><td>${esc(p.method)}</td><td>${esc(p.status)}</td><td>${money(p.value)}</td><td><button class="smallbtn secondary" onclick="receipt('${p.id}')">PDF / imprimir</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Nenhum pagamento registrado.</td></tr>'; let upcoming=data.sessions.filter(s=>s.status==='Agendada').sort((a,b)=>String(a.date).localeCompare(String(b.date)));let list=upcoming.map(s=>`<p>📅 <b>${new Date(s.date).toLocaleString('pt-BR')}</b> — ${esc(patientName(s.patient))}</p>`).join('')||'Nenhum atendimento agendado.';$('nextList').innerHTML=list;$('agendaList').innerHTML=list;
 renderFinanceChart();
 }
-$('finBalance').textContent=money(totalRecebido-totalPendente);
 
 async function startApp(){user=(await sb.auth.getUser()).data.user;if(!user){$('loginView').style.display='grid';$('app').style.display='none';return}try{await loadData();$('loginView').style.display='none';$('app').style.display='block'}catch(e){alert('Não foi possível carregar os dados: '+e.message)}}
 $('loginForm').onsubmit=async e=>{
