@@ -117,7 +117,7 @@ async function loadData(){
  if(m.error)throw m.error;
  if(r.error)throw r.error;
 
- data.patients=p.data.map(x=>({id:x.id,name:x.name,phone:x.phone||'',birth:x.birth_date||'',model:x.billing_model||'Por sessão',value:Number(x.agreed_value)||0,qty:Number(x.package_quantity)||0,notes:x.administrative_notes||'',created:x.created_at}));
+ data.patients=p.data.map(x=>({id:x.id,name:x.name,phone:x.phone||'',birth:x.birth_date||'',model:x.billing_model||'Por sessão',value:Number(x.agreed_value)||0,qty:Number(x.package_quantity)||0,notes:x.administrative_notes||'',created:x.created_at,packageStart:x.package_start_date||''}));
 
  data.sessions=s.data.map(x=>({id:x.id,patient:x.patient_id,date:x.scheduled_at,status:x.status,value:Number(x.value)||0,desc:x.description||''}));
 
