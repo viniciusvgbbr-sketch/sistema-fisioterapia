@@ -266,7 +266,10 @@ $('recoveryRows').innerHTML=data.recoveries.map(r=>`<tr>
 <td>${money(r.value)}</td>
 <td>${esc(r.method)}</td>
 <td>${esc(r.status)}</td>
-<td><button class="smallbtn secondary" onclick="delItem('recoveries','${r.id}')">Excluir</button></td>
+<td>
+<button class="smallbtn secondary" onclick="recoveryReceipt('${r.id}')">PDF / imprimir</button>
+<button class="smallbtn secondary" onclick="delItem('recoveries','${r.id}')">Excluir</button>
+</td>
 </tr>`).join('')||'<tr><td colspan="6" class="empty">Nenhum atendimento Recovery registrado.</td></tr>';renderFinanceChart();
 }
 
