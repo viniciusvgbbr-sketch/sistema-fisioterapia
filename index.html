@@ -13,7 +13,18 @@
 <div id="loginView" class="login-wrap"><section class="login">
 <img class="brand-logo" src="logo.png" alt="Logo Dra. Ana Paula Dourado" onerror="this.style.display='none'">
 <h1>Dra. Ana Paula Dourado</h1><div class="gold">FISIOTERAPEUTA</div><p class="muted">Sistema de gestão de atendimentos</p>
-<form id="loginForm"><div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="username" required placeholder="Seu e-mail"></div><div class="field"><label>Senha</label><input id="password" type="password" autocomplete="current-password" required placeholder="Sua senha"></div><button class="full">Entrar</button><div id="loginError" class="error"></div></form>
+<form id="loginForm">
+<div class="field">
+<label>Usuário</label>
+<input id="email" type="text" autocomplete="username" required placeholder="Digite seu usuário">
+</div>
+<div class="field">
+<label>Senha</label>
+<input id="password" type="password" autocomplete="current-password" required placeholder="Sua senha">
+</div>
+<button class="full">Entrar</button>
+<div id="loginError" class="error"></div>
+</form>
 <div class="hint">Acesso restrito. Use o e-mail e a senha cadastrados no Supabase.</div>
 </section></div>
 <div id="app" class="app"><aside class="sidebar"><div class="brand"><img src="logo.png" alt=""><div><strong>Dra. Ana Paula Dourado</strong><small>FISIOTERAPIA</small></div></div>
@@ -140,7 +151,32 @@ $('finCount').textContent=pagamentosPeriodo.length;
 $('finBalance').textContent=money(totalRecebido-totalPendente);
 
 async function startApp(){user=(await sb.auth.getUser()).data.user;if(!user){$('loginView').style.display='grid';$('app').style.display='none';return}try{await loadData();$('loginView').style.display='none';$('app').style.display='block'}catch(e){alert('Não foi possível carregar os dados: '+e.message)}}
-$('loginForm').onsubmit=async e=>{e.preventDefault();msg('loginError','');if(!sb){msg('loginError','Configure a URL e a chave publicável do Supabase no código antes de entrar.');return}const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){msg('loginError','Não foi possível entrar: '+error.message);return}await startApp()};
+$('loginForm').onsubmit=async e=>{
+ e.preventDefault();
+ msg('loginError','');
+
+ if(!sb){
+  msg('loginError','Configure o Supabase antes de entrar.');
+  return;
+ }
+
+ const usuario=$('email').value.trim().toLowerCase();
+ const email=usuario==='dranapaula'
+  ? 'vinicius.vgb.br@gmail.com'
+  : usuario;
+
+ const {error}=await sb.auth.signInWithPassword({
+  email:email,
+  password:$('password').value
+ });
+
+ if(error){
+  msg('loginError','Não foi possível entrar: '+error.message);
+  return;
+ }
+
+ await startApp();
+};
 $('logout').onclick=async()=>{await sb.auth.signOut();user=null;$('app').style.display='none';$('loginView').style.display='grid';$('password').value=''};
 $('quickAdd').onclick=()=>showPage('patients');$('patientSearch').oninput=render;
 $('patientForm').onsubmit=async e=>{e.preventDefault();msg('patientError','');const id=$('pId').value;const row={owner_id:user.id,name:$('pName').value.trim(),phone:$('pPhone').value||null,birth_date:$('pBirth').value||null,billing_model:$('pModel').value,agreed_value:Number($('pValue').value)||0,package_quantity:Number($('pQty').value)||null,administrative_notes:$('pNotes').value||null};let q=id?sb.from('patients').update(row).eq('id',id):sb.from('patients').insert(row);const {error}=await q;if(error){msg('patientError',error.message);return}e.target.reset();$('pId').value='';await loadData()};
