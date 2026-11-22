@@ -183,8 +183,21 @@ $('patientForm').onsubmit=async e=>{e.preventDefault();msg('patientError','');co
 function editPatient(id){let p=data.patients.find(x=>x.id===id);if(!p)return;showPage('patients');$('pId').value=p.id;$('pName').value=p.name;$('pPhone').value=p.phone;$('pBirth').value=p.birth;$('pModel').value=p.model;$('pValue').value=p.value;$('pQty').value=p.qty||'';$('pNotes').value=p.notes;window.scrollTo(0,0)}
 async function delPatient(id){if(!confirm('Excluir este paciente? Se houver sessões ou pagamentos vinculados, o banco poderá impedir a exclusão.'))return;const {error}=await sb.from('patients').delete().eq('id',id);if(error){alert('Não foi possível excluir: '+error.message);return}await loadData()}
 $('cancelPatient').onclick=()=>{$('patientForm').reset();$('pId').value='';msg('patientError','')};
-$('sessionForm').onsubmit=async e=>{e.preventDefault();msg('sessionError','');const row={owner_id:user.id,patient_id:$('sPatient').value,scheduled_at:new Date($('sDate').value).toISOString(),status:$('sStatus').value,value:Number($('sValue').value)||0,description:$('sDesc').value||null};const {error}=await sb.from('sessions').insert(row);if(error){msg('sessionError',error.message);return}e.target.reset();await loadData()};
-$('payDate').value=new Date().toISOString().slice(0,10);$('payForm').onsubmit=async e=>{e.preventDefault();msg('payError','');const row={owner_id:user.id,patient_id:$('payPatient').value,payment_date:$('payDate').value,amount:Number($('payValue').value),payment_method:$('payMethod').value,status:$('payStatus').value,description:$('payDesc').value||null};const {error}=await sb.from('payments').insert(row);if(error){msg('payError',error.message);return}e.target.reset();$('payDate').value=new Date().toISOString().slice(0,10);await loadData()};
+$('sessionForm').onsubmit=async e=>{
+e.preventDefault();
+msg('sessionError','');
+const row={
+owner_id:user.id,
+patient_id:$('sPatient').value,
+scheduled_at:new Date($('sDate').value).toISOString(),
+status:$('sStatus').value,
+description:$('sDesc').value||null
+};
+const {error}=await sb.from('sessions').insert(row);
+if(error){msg('sessionError',error.message);return}
+e.target.reset();
+await loadData()
+};$('payDate').value=new Date().toISOString().slice(0,10);$('payForm').onsubmit=async e=>{e.preventDefault();msg('payError','');const row={owner_id:user.id,patient_id:$('payPatient').value,payment_date:$('payDate').value,amount:Number($('payValue').value),payment_method:$('payMethod').value,status:$('payStatus').value,description:$('payDesc').value||null};const {error}=await sb.from('payments').insert(row);if(error){msg('payError',error.message);return}e.target.reset();$('payDate').value=new Date().toISOString().slice(0,10);await loadData()};
 async function delItem(type,id){if(!confirm('Excluir este registro?'))return;const table=type==='sessions'?'sessions':'payments';const {error}=await sb.from(table).delete().eq('id',id);if(error){alert('Não foi possível excluir: '+error.message);return}await loadData()}
 function receipt(id){let p=data.payments.find(x=>x.id===id);if(!p)return;let w=window.open('','_blank');w.document.write(`<html><head><title>Recibo</title><style>body{font:16px Arial;padding:50px;color:#222}.r{max-width:700px;margin:auto;border:1px solid #ddd;padding:35px}h1{color:#9b7837}small{color:#9b7837}</style></head><body><div class="r"><h1>Dra. Ana Paula Dourado</h1><small>FISIOTERAPEUTA · CREFITO 450197-F</small><hr><h2>RECIBO DE PAGAMENTO</h2><p>Recibo nº ${esc(p.id.slice(0,8).toUpperCase())}</p><p>Recebi de <b>${esc(patientName(p.patient))}</b> a importância de <b>${money(p.value)}</b>.</p><p>Referente a: ${esc(p.desc||'Serviços de fisioterapia')}</p><p>Data: ${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')} · Forma: ${esc(p.method)}</p><br><p>__________________________________<br>Dra. Ana Paula Dourado<br>CREFITO 450197-F</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
 $('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-fisioterapia.json';a.click();URL.revokeObjectURL(a.href)};
