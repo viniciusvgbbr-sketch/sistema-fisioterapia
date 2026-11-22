@@ -206,7 +206,9 @@ const totalAReceber=data.patients.reduce((total,p)=>{
  return total+Math.max(0,devido-recebidos);
 },0);
 
-$('kDue').textContent=money(totalAReceber);const valorTotalContratado=data.patients.reduce((total,p)=>{
+$('kDue').textContent=money(totalAReceber);
+
+const valorPacientes=data.patients.reduce((total,p)=>{
  let valor=0;
 
  if(p.model==='Por sessão'){
@@ -223,6 +225,13 @@ $('kDue').textContent=money(totalAReceber);const valorTotalContratado=data.patie
  return total+valor;
 },0);
 
+const valorRecovery=data.recoveries
+ .filter(r=>r.status==='Realizado')
+ .reduce((total,r)=>total+Number(r.value||0),0);
+
+const valorTotalContratado=valorPacientes+valorRecovery;
+
+$('kTotal').textContent=money(valorTotalContratado);
 $('kTotal').textContent=money(valorTotalContratado);
  let q=($('patientSearch').value||'').toLowerCase();$('patientRows').innerHTML=data.patients.filter(p=>p.name.toLowerCase().includes(q)).map(p=>{const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada').length;const percentual=p.qty?Math.min(realizadas/p.qty*100,100):0;const restantes=p.qty?Math.max(p.qty-realizadas,0):null;const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido').reduce((s,x)=>s+Number(x.value||0),0);
 let devido=0;
