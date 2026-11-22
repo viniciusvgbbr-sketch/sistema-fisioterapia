@@ -190,7 +190,8 @@ const totalAReceber=data.patients.reduce((total,p)=>{
  let devido=0;
 
  if(p.model==='Por sessão'){
-  const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada').length;
+  const inicioPacote=p.packageStart||String(p.created||'').slice(0,10);
+const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada'&&(p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)).length;
   devido=realizadas*p.value;
  }else if(p.model==='Pacote'){
   devido=p.value;
