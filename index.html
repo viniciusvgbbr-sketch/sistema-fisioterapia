@@ -83,7 +83,7 @@ function msg(id,e){$(id).textContent=e?.message||String(e||'');}
 async function loadData(){
  const [p,s,m]=await Promise.all([sb.from('patients').select('*').order('created_at',{ascending:false}),sb.from('sessions').select('*').order('scheduled_at',{ascending:false}),sb.from('payments').select('*').order('payment_date',{ascending:false})]);
  if(p.error)throw p.error;if(s.error)throw s.error;if(m.error)throw m.error;
- data.patients=p.data.map(x=>({id:x.id,name:x.name,phone:x.phone||'',birth:x.birth_date||'',model:x.billing_model||'Por sessão',value:Number(x.agreed_value)||0,qty:Number(x.package_quantity)||0,notes:x.administrative_notes||''}));
+ data.patients=p.data.map(x=>({id:x.id,name:x.name,phone:x.phone||'',birth:x.birth_date||'',model:x.billing_model||'Por sessão',value:Number(x.agreed_value)||0,qty:Number(x.package_quantity)||0,notes:x.administrative_notes||'',created:x.created_at}));
  data.sessions=s.data.map(x=>({id:x.id,patient:x.patient_id,date:x.scheduled_at,status:x.status,value:Number(x.value)||0,desc:x.description||''}));
  data.payments=m.data.map(x=>({id:x.id,patient:x.patient_id,date:x.payment_date,value:Number(x.amount)||0,method:x.payment_method||'',status:x.status,desc:x.description||''}));render();
 }let financeChartInstance=null;
