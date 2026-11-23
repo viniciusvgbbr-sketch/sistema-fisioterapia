@@ -1,6 +1,7 @@
 {
   "name": "Sistema de Fisioterapia",
   "short_name": "Fisioterapia",
+  "id": "/",
   "description": "Gestão de pacientes, atendimentos e financeiro",
   "start_url": "/",
   "scope": "/",
