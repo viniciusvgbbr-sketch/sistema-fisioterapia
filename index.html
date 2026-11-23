@@ -230,10 +230,18 @@ const valorTotalContratado=valorPacientes+valorRecovery;
 $('kTotal').textContent=money(valorTotalContratado);
  let q=($('patientSearch').value||'').toLowerCase();$('patientRows').innerHTML=data.patients.filter(p=>p.name.toLowerCase().includes(q)).map(p=>{
 const inicioPacote=p.packageStart||String(p.created||'').slice(0,10);
-const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada'&&(p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)).length;
+const realizadas=data.sessions.filter(s=>
+ s.patient===p.id&&
+ s.status==='Realizada'&&
+ (p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)
+).length;
 const percentual=p.qty?Math.min(realizadas/p.qty*100,100):0;
 const restantes=p.qty?Math.max(p.qty-realizadas,0):null;
-const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido'&&(p.model!=='Pacote'||(p.packageStartAt?new Date(x.date+'T12:00:00')>=new Date(p.packageStartAt):String(x.date).slice(0,10)>=inicioPacote))).reduce((s,x)=>s+Number(x.value||0),0);let devido=0;
+const recebidos=data.payments.filter(x=>
+ x.patient===p.id&&
+ x.status==='Recebido'&&
+ (p.model!=='Pacote'||String(x.date).slice(0,10)>=inicioPacote)
+).reduce((s,x)=>s+Number(x.value||0),0);let devido=0;
 if(p.model==='Por sessão'){
  devido=realizadas*p.value;
 }else if(p.model==='Pacote'){
