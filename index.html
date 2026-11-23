@@ -204,20 +204,6 @@ const totalAReceber=data.patients.reduce((total,p)=>{
 
  return total+Math.max(0,devido-recebidos);
 },0);
- let devido=0;
-
- if(p.model==='Por sessão'){
-  devido=realizadas*p.value;
- }else if(p.model==='Pacote'){
-  devido=p.value;
- }else if(p.model==='Mensal'){
-  const inicio=new Date(p.created);
-  const meses=(hoje.getFullYear()-inicio.getFullYear())*12+(hoje.getMonth()-inicio.getMonth())+1;
-  devido=Math.max(meses,0)*p.value;
- }
-
- return total+Math.max(0,devido-recebidos);
-},0);
 
 $('kDue').textContent=money(totalAReceber);
 
