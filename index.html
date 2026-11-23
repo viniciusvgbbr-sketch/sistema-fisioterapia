@@ -187,7 +187,23 @@ $('kMonth').textContent=money([
  ...data.recoveries
 ].filter(p=>p.status==='Recebido'&&p.date.startsWith(mesAtual)).reduce((a,p)=>a+Number(p.value||0),0));
 const totalAReceber=data.patients.reduce((total,p)=>{
-  const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido'&&(p.model!=='Pacote'||String(x.date).slice(0,10)>=inicioPacote)).reduce((s,x)=>s+x.value,0);
+ const inicioPacote=p.packageStart||String(p.created||'').slice(0,10);
+ const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada'&&(p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)).length;
+ const recebidos=data.payments.filter(x=>x.patient===p.id&&x.status==='Recebido'&&(p.model!=='Pacote'||String(x.date).slice(0,10)>=inicioPacote)).reduce((s,x)=>s+x.value,0);
+ let devido=0;
+
+ if(p.model==='Por sessão'){
+  devido=realizadas*p.value;
+ }else if(p.model==='Pacote'){
+  devido=p.value;
+ }else if(p.model==='Mensal'){
+  const inicio=new Date(p.created);
+  const meses=(hoje.getFullYear()-inicio.getFullYear())*12+(hoje.getMonth()-inicio.getMonth())+1;
+  devido=Math.max(meses,0)*p.value;
+ }
+
+ return total+Math.max(0,devido-recebidos);
+},0);
  let devido=0;
 
  if(p.model==='Por sessão'){
