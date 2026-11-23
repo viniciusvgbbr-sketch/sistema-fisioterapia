@@ -402,7 +402,15 @@ function receipt(id){let p=data.payments.find(x=>x.id===id);if(!p){recoveryRecei
 }
 .finance-cards .card{
  min-height:100px;
-}</style></head><body><div class="r"><h1>Dra. Ana Paula Dourado</h1><small>FISIOTERAPEUTA · CREFITO 450197-F</small><hr><h2>RECIBO DE PAGAMENTO</h2><p>Recibo nº ${esc(p.id.slice(0,8).toUpperCase())}</p><p>Recebi de <b>${esc(patientName(p.patient))}</b> a importância de <b>${money(p.value)}</b>.</p><p>Referente a: ${esc(p.desc||'Serviços de fisioterapia')}</p><p>Data: ${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')} · Forma: ${esc(p.method)}</p><br><p>__________________________________<br>Dra. Ana Paula Dourado<br>CREFITO 450197-F</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
+}</style></head><body><div class="r"><h1>Dra. Ana Paula Dourado</h1><small>FISIOTERAPEUTA · CREFITO 450197-F</small><hr><h2>RECIBO DE PAGAMENTO</h2><p>Recibo nº ${esc(p.id.slice(0,8).toUpperCase())}</p><p>Recebi de <b>${esc(patientName(p.patient))}</b> a importância de <b>${money(p.value)}</b>.</p><p>Referente a: ${esc(p.desc||'Serviços de fisioterapia')}</p><p>Data: ${new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR')} · Forma: ${esc(p.method)}</p><br><p>__________________________________<br>Dra. Ana Paula Dourado<br>CREFITO 450197-F</p></div><script>window.onload=()=>window.print()<\/script><script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('Aplicativo preparado!'))
+      .catch(error => console.error('Erro:', error));
+  });
+}
+</script></body></html>`);w.document.close()}
 function recoveryReceipt(id){
 const r=data.recoveries.find(x=>x.id===id);
 if(!r)return;
