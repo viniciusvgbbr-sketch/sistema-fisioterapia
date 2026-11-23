@@ -412,4 +412,17 @@ w.document.write(`<html><head><title>Recibo Recovery</title><style>body{font:16p
 w.document.close();
 }$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-fisioterapia.json';a.click();URL.revokeObjectURL(a.href)};
 (function init(){if(SUPABASE_URL.startsWith('http')&&SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_')){sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);sb.auth.onAuthStateChange((_event,session)=>{if(session?.user)startApp()})}else{msg('loginError','Configure a URL e a chave publicável do Supabase no código.')}})();
-</script></body></html>
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('Aplicativo preparado!'))
+      .catch(error => console.error('Erro:', error));
+  });
+}
+</script>
+
+</body>
+</html>
