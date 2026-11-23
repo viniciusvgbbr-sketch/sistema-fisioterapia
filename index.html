@@ -211,7 +211,7 @@ const valorPacientes=data.patients.reduce((total,p)=>{
  let valor=0;
 
  if(p.model==='Por sessão'){
-  const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada'&&(p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)).length;
+  const realizadas=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada'&&(p.model!=='Pacote'||(p.packageStartAt?new Date(s.date)>=new Date(p.packageStartAt):String(s.date).slice(0,10)>=inicioPacote))).length;
   valor=realizadas*p.value;
  }else if(p.model==='Pacote'){
   valor=p.value;
