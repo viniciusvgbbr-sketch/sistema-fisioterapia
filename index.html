@@ -169,7 +169,11 @@ const recebido=meses.map(m=>[...data.payments,...data.recoveries].filter(p=>p.da
 function render(){
  $('kPatients').textContent=data.patients.length;$('kSessions').textContent=data.sessions.filter(s=>s.status==='Realizada').length;const totalSessoesRestantes=data.patients.reduce((total,p)=>{
  const inicioPacote=p.packageStart||String(p.created||'').slice(0,10);
-   const realizadasPaciente=data.sessions.filter(s=>s.patient===p.id&&s.status==='Realizada').length;
+   const realizadasPaciente=data.sessions.filter(s=>
+ s.patient===p.id&&
+ s.status==='Realizada'&&
+ (p.model!=='Pacote'||String(s.date).slice(0,10)>=inicioPacote)
+).length;
  return total+(p.qty?Math.max(0,p.qty-realizadasPaciente):0);
 },0);
 $('kRemaining').textContent=totalSessoesRestantes;const totalSessoesContratadas=data.patients.reduce((total,p)=>total+(Number(p.qty)||0),0);
